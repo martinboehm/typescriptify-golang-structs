@@ -5,13 +5,13 @@
 The command-line tool:
 
 ```
-go get github.com/tkrajina/typescriptify-golang-structs/tscriptify
+go get github.com/martinboehm/typescriptify-golang-structs/tscriptify
 ```
 
 The library:
 
 ```
-go get github.com/tkrajina/typescriptify-golang-structs
+go get github.com/martinboehm/typescriptify-golang-structs
 ```
 
 ## Usage
@@ -92,64 +92,67 @@ Generated TypeScript:
 
 ```typescript
 export class Address {
-    city: string;
-    number: number;
-    country?: string;
+  city: string;
+  number: number;
+  country?: string;
 
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.city = source["city"];
-        this.number = source["number"];
-        this.country = source["country"];
-    }
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.city = source["city"];
+    this.number = source["number"];
+    this.country = source["country"];
+  }
 }
 export class PersonalInfo {
-    hobby: string[];
-    pet_name: string;
+  hobby: string[];
+  pet_name: string;
 
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.hobby = source["hobby"];
-        this.pet_name = source["pet_name"];
-    }
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.hobby = source["hobby"];
+    this.pet_name = source["pet_name"];
+  }
 }
 export class Person {
-    name: string;
-    personal_info: PersonalInfo;
-    nicknames: string[];
-    addresses: Address[];
-    address?: Address;
-    metadata: {[key:string]:string};
-    friends: Person[];
+  name: string;
+  personal_info: PersonalInfo;
+  nicknames: string[];
+  addresses: Address[];
+  address?: Address;
+  metadata: { [key: string]: string };
+  friends: Person[];
 
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.name = source["name"];
-        this.personal_info = this.convertValues(source["personal_info"], PersonalInfo);
-        this.nicknames = source["nicknames"];
-        this.addresses = this.convertValues(source["addresses"], Address);
-        this.address = this.convertValues(source["address"], Address);
-        this.metadata = source["metadata"];
-        this.friends = this.convertValues(source["friends"], Person);
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.name = source["name"];
+    this.personal_info = this.convertValues(
+      source["personal_info"],
+      PersonalInfo
+    );
+    this.nicknames = source["nicknames"];
+    this.addresses = this.convertValues(source["addresses"], Address);
+    this.address = this.convertValues(source["address"], Address);
+    this.metadata = source["metadata"];
+    this.friends = this.convertValues(source["friends"], Person);
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
     }
-
-	convertValues(a: any, classs: any, asMap: boolean = false): any {
-		if (!a) {
-			return a;
-		}
-		if (a.slice) {
-			return (a as any[]).map(elem => this.convertValues(elem, classs));
-		} else if ("object" === typeof a) {
-			if (asMap) {
-				for (const key of Object.keys(a)) {
-					a[key] = new classs(a[key]);
-				}
-				return a;
-			}
-			return new classs(a);
-		}
-		return a;
-	}
+    if (a.slice) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
 }
 ```
 
@@ -157,29 +160,29 @@ If you prefer interfaces, the output is:
 
 ```typescript
 export interface Address {
-    city: string;
-    number: number;
-    country?: string;
+  city: string;
+  number: number;
+  country?: string;
 }
 export interface PersonalInfo {
-    hobby: string[];
-    pet_name: string;
+  hobby: string[];
+  pet_name: string;
 }
 export interface Person {
-    name: string;
-    personal_info: PersonalInfo;
-    nicknames: string[];
-    addresses: Address[];
-    address?: Address;
-    metadata: {[key:string]:string};
-    friends: Person[];
+  name: string;
+  personal_info: PersonalInfo;
+  nicknames: string[];
+  addresses: Address[];
+  address?: Address;
+  metadata: { [key: string]: string };
+  friends: Person[];
 }
 ```
 
 In TypeScript you can just cast your json object in any of those models:
 
 ```typescript
-var person = <Person> {"name":"Me myself","nicknames":["aaa", "bbb"]};
+var person = <Person>{ name: "Me myself", nicknames: ["aaa", "bbb"] };
 console.log(person.name);
 // The TypeScript compiler will throw an error for this line
 console.log(person.something);
@@ -191,14 +194,14 @@ Any custom code can be added to Typescript models:
 
 ```typescript
 class Address {
-        street : string;
-        no : number;
-        //[Address:]
-        country: string;
-        getStreetAndNumber() {
-            return street + " " + number;
-        }
-        //[end]
+  street: string;
+  no: number;
+  //[Address:]
+  country: string;
+  getStreetAndNumber() {
+    return street + " " + number;
+  }
+  //[end]
 }
 ```
 
@@ -209,7 +212,7 @@ If your custom code contain methods, then just casting yout object to the target
 In that case use the constructor:
 
 ```typescript
-var person = new Person({"name":"Me myself","nicknames":["aaa", "bbb"]});
+var person = new Person({ name: "Me myself", nicknames: ["aaa", "bbb"] });
 ```
 
 If you use golang JSON structs as responses from your API, you may want to have a common prefix for all the generated models:
@@ -236,8 +239,8 @@ Generated typescript:
 
 ```typescript
 export class Person {
-	/** This is a comment */
-	name: string;
+  /** This is a comment */
+  name: string;
 }
 ```
 
@@ -255,7 +258,7 @@ type Data struct {
 
 ```typescript
 export class Data {
-        counters: CustomType;
+  counters: CustomType;
 }
 ```
 
@@ -272,12 +275,12 @@ Generated typescript:
 
 ```typescript
 export class Date {
-	time: Date;
+  time: Date;
 
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.time = new Date(source["time"]);
-    }
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.time = new Date(source["time"]);
+  }
 }
 ```
 
@@ -305,7 +308,7 @@ If you only want to change `ts_transform` but not `ts_type`, you can pass an emp
 
 ## Enums
 
-There are two ways to create enums. 
+There are two ways to create enums.
 
 ### Enums with TSName()
 
@@ -376,17 +379,17 @@ The resulting code will be:
 
 ```typescript
 export enum Weekday {
-	SUNDAY = 0,
-	MONDAY = 1,
-	TUESDAY = 2,
-	WEDNESDAY = 3,
-	THURSDAY = 4,
-	FRIDAY = 5,
-	SATURDAY = 6,
+  SUNDAY = 0,
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
 }
 export class Holliday {
-	name: string;
-	weekday: Weekday;
+  name: string;
+  weekday: Weekday;
 }
 ```
 
